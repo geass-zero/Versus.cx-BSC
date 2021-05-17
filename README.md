@@ -1,4 +1,4 @@
-# Nyan Finance(BSC)
+# Versus.cx(BSC)
 
 Versus.cx is a decentralized binary options platform that allows users to make predictions on the price patterns of popular tokens.
 
