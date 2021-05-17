@@ -2,41 +2,10 @@ pragma solidity ^0.6.6;
 
 import "./BEP20.sol";
 
-contract Proxiable {
-    // Code position in storage is keccak256("PROXIABLE") = "0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7"
+contract Versus is BEP20 {
+    using SafeERC20 for IBEP20;
+    using SafeMath for uint256;
 
-    function updateCodeAddress(address newAddress) internal {
-        require(
-            bytes32(0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7) == Proxiable(newAddress).proxiableUUID(),
-            "Not compatible"
-        );
-        assembly { // solium-disable-line
-            sstore(0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7, newAddress)
-        }
-    }
-    function proxiableUUID() public pure returns (bytes32) {
-        return 0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7;
-    }
-}
-
-contract LibraryLockDataLayout {
-  bool public initialized = false;
-}
-
-contract LibraryLock is LibraryLockDataLayout {
-    // Ensures no one can manipulate the Logic Contract once it is deployed.
-    // PARITY WALLET HACK PREVENTION
-
-    modifier delegatedOnly() {
-        require(initialized == true, "The library is locked. No direct 'call' is allowed");
-        _;
-    }
-    function initialize() internal {
-        initialized = true;
-    }
-}
-
-contract TokenDataLayout is LibraryLock {
     address public owner;
     
     struct userStruct {
@@ -55,11 +24,6 @@ contract TokenDataLayout is LibraryLock {
     uint256 public predictionFees;
 
     mapping(address => bool) whitelistedContracts;
-}
-
-contract Versus is BEP20, TokenDataLayout, Proxiable {
-    using SafeERC20 for IBEP20;
-    using SafeMath for uint256;
     
     constructor() public payable BEP20("Versus.cx", "Versus"){
         owner = msg.sender;
