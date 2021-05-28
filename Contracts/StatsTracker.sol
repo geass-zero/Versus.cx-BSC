@@ -23,6 +23,10 @@ contract VersusStats is BEP20 {
     }
     
     
+    function getStats() public view returns(uint256, address[] memory, uint256[] memory, address[] memory, uint256[] memory) {
+        
+    }
+
     function adjustMontlyLeaders(address user, uint256 volume) public {
         //require call come from Nyan token
         //if (monthlyVolumeLeaders[monthlyVolumeLeaders.length-1].volume >= volume) return false;

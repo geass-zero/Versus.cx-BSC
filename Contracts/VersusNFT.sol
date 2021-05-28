@@ -5,19 +5,19 @@ import "./BEP721.sol";
 contract VersusNFT is BEP721 {
     using SafeMath for uint256;
     address public owner;
-    
+    address public versusToken;
     uint256 _tokenId;
     
     struct details {
         uint32 NFTLevel;
-        uint112 bonus;
+        uint32 bonus;
         bool isStaked;
     }
     mapping(uint256 => details) nftDetails; 
 
-    constructor() public payable BEP721("Versus Badge", "VersusNFT") {
+    constructor(address _versusToken) public payable BEP721("Versus Badge", "VersusNFT") {
         owner = msg.sender;
-
+        versusToken = _versusToken;
     }
 
 
@@ -31,6 +31,11 @@ contract VersusNFT is BEP721 {
         uint256 tokenLevel = nftDetails[tokenId].NFTLevel;
         return super.tokenURI(tokenLevel);
     }
+
+    function setLevelURI(uint256 level, string memory _tokenURI) public {
+        require(msg.sender == owner);
+        _setTokenURI(level, _tokenURI);
+    }
     
     /** @notice Creates a new Versus NFT.
       * @param _claimer Address of the claiming user.
@@ -41,17 +46,31 @@ contract VersusNFT is BEP721 {
         uint256 newItemId = _tokenIds.add(1);
         _tokenIds = _tokenIds.add(1);
         _mint(_claimer, newItemId);
-        nftDetails[newItemId].originalOwner = _claimer;
         nftDetails[newItemId].level = _level;
+        //add bonus
+        //is staked
         
         return newItemId;
     }
     
-
-    
-    function getNFTDetails(uint256 id) public view delegatedOnly returns(address, string memory, uint112, bool) {
-        return(nftDetails[id].originalOwner, nftDetails[id].tier, nftDetails[id].bonus, nftDetails[id].isStaked);
+    function getNFTDetails(uint256 id) public view delegatedOnly returns(uint32, uint32, bool, string memory) {
+        return(nftDetails[id].level, 
+               nftDetails[id].bonus, 
+               nftDetails[id].isStaked,
+               tokenURI(id));
     }
+
+    //stake
+    function stakeNFT() {
+
+    }
+
+    //unstake
+    function unstakeNFT() {
+
+    }
+    
+    //super transfer(unstake on transfer)
     
     
 }
